@@ -18,8 +18,12 @@ public class Authenticator {
   private static final Map<String, String> AUTH = new HashMap<>();
 
   static {
-    AUTH.put("user", "user");
-    AUTH.put("admin", "admin");
+    try {
+      AUTH.put("user", HashHelper.hash("user"));
+      AUTH.put("admin", HashHelper.hash("admin"));
+    } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
+      Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
+    }
   }
 
   public static boolean validRequest(final Request request) {
@@ -36,6 +40,9 @@ public class Authenticator {
     final long timestamp = request.getTimestamp();
     final Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
     if (requestTimestamp.plus(REQUEST_DEVIATION).isBefore(Instant.now())) {
+      System.out.println("timestamp invalid");
+      System.out.println("server: " + Instant.now());
+      System.out.println("client: " + requestTimestamp);
       return true;
     }
     return false;
@@ -45,6 +52,7 @@ public class Authenticator {
     final String user = request.getUser();
     final String passphrase = findPassphraseForUser(user);
     if (passphrase == null) {
+      System.out.println("no passphrase");
       return true;
     }
     long timestamp = request.getTimestamp();
@@ -57,8 +65,12 @@ public class Authenticator {
     toHash.append(passphrase);
     //TODO: append more request data
 
+    System.out.println("toHash: " + toHash.toString());
+
     try {
-      return !HashHelper.hash(toHash.toString()).equals(request.getHash());
+      boolean hashesEqual = HashHelper.hash(toHash.toString()).equals(request.getHash());
+      System.out.println("hashes equal: " + hashesEqual);
+      return !hashesEqual;
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
       Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
     }

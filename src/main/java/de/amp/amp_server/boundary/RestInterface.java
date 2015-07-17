@@ -28,7 +28,7 @@ public class RestInterface {
 
     if (Authenticator.validRequest(request)) {
       Response response = new Response();
-      response.setResult(":)");
+      response.setResult("authenticated");
       return response;
     }
 

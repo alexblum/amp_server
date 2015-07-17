@@ -32,7 +32,6 @@ public class Authenticator {
     final long timestamp = request.getTimestamp();
     final Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
     if (requestTimestamp.plus(REQUEST_DEVIATION).isBefore(Instant.now())) {
-      LOGGER.log(Level.INFO, "timestamp is too old for {0}", request.getUser());
       return true;
     }
     return false;
@@ -53,7 +52,6 @@ public class Authenticator {
     //TODO: append more request data
 
     try {
-      System.out.println(HashHelper.hash(toHash.toString()));
       return !HashHelper.hash(toHash.toString()).equals(request.getHash());
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
       LOGGER.log(Level.WARNING, null, ex);

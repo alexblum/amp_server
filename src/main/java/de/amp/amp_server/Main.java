@@ -1,5 +1,7 @@
 package de.amp.amp_server;
 
+import de.amp.amp_server.boundary.AmpServer;
+
 public class Main {
 
   public static void main(String[] args) {

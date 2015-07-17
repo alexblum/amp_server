@@ -1,5 +1,7 @@
-package de.amp.amp_server;
+package de.amp.amp_server.boundary;
 
+import de.amp.amp_server.boundary.RestInterface;
+import de.amp.amp_server.boundary.AmpErrorHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.jetty.server.Server;

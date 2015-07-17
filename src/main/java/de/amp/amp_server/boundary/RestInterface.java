@@ -1,4 +1,4 @@
-package de.amp.amp_server;
+package de.amp.amp_server.boundary;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

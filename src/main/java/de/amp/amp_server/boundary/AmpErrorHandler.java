@@ -1,4 +1,4 @@
-package de.amp.amp_server;
+package de.amp.amp_server.boundary;
 
 import java.io.IOException;
 import java.io.Writer;

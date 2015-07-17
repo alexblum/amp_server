@@ -1,6 +1,7 @@
 package de.amp.amp_server.datasource;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import de.amp.amp_server.control.helper.Utils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ public class Datasource {
   private Properties props;
   private ComboPooledDataSource cpds;
   private static Datasource datasource;
-  private static Logger log = Logger.getLogger(Datasource.class.getName());
+  private static final Logger log = Logger.getLogger(Datasource.class.getName());
 
   private Datasource() throws IOException, SQLException {
     // load datasource properties

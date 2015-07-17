@@ -2,7 +2,6 @@ package de.amp.amp_server.boundary;
 
 import de.amp.amp_server.boundary.bean.Request;
 import de.amp.amp_server.boundary.bean.Response;
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,9 +11,6 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/rest")
 public class RestInterface {
-
-  @Inject
-  Authenticator authenticator;
 
   @GET
   @Path("hello")
@@ -30,7 +26,7 @@ public class RestInterface {
   public Response entry(Request request) {
     System.out.println("received post!");
 
-    if (authenticator.authenticate(request)) {
+    if (Authenticator.authenticate(request)) {
       Response response = new Response();
       response.setResult(":)");
       return response;

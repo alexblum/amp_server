@@ -41,6 +41,11 @@
       <artifactId>jetty-util</artifactId>
       <version>9.3.1.v20150714</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlets</artifactId>
+      <version>9.3.1.v20150714</version>
+    </dependency>
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

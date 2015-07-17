@@ -22,7 +22,7 @@ public class Authenticator {
     AUTH.put("admin", "admin");
   }
 
-  public boolean authenticate(Request request) {
+  public static boolean authenticate(final Request request) {
     if (timestampTooOld(request)) {
       return false;
     }
@@ -32,24 +32,24 @@ public class Authenticator {
     return true;
   }
 
-  private boolean timestampTooOld(Request request) {
-    long timestamp = request.getTimestamp();
-    Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
+  private static boolean timestampTooOld(final Request request) {
+    final long timestamp = request.getTimestamp();
+    final Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
     if (requestTimestamp.plus(REQUEST_DEVIATION).isBefore(Instant.now())) {
       return true;
     }
     return false;
   }
 
-  private boolean hashInvalid(Request request) {
-    String user = request.getUser();
-    String passphrase = findPassphraseForUser(user);
+  private static boolean hashInvalid(Request request) {
+    final String user = request.getUser();
+    final String passphrase = findPassphraseForUser(user);
     if (passphrase == null) {
       return true;
     }
     long timestamp = request.getTimestamp();
 
-    StringBuilder toHash = new StringBuilder();
+    final StringBuilder toHash = new StringBuilder();
 
     toHash.append(SALT);
     toHash.append(user);
@@ -65,7 +65,7 @@ public class Authenticator {
     return true;
   }
 
-  private String findPassphraseForUser(String user) {
+  private static String findPassphraseForUser(String user) {
     return AUTH.get(user);
   }
 }

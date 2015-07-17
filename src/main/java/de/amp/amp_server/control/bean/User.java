@@ -1,5 +1,7 @@
 package de.amp.amp_server.control.bean;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -39,6 +41,26 @@ public class User {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getPasswordMD5() {
+    if (password == null) {
+      return null;
+    }
+    try {
+      MessageDigest digest = MessageDigest.getInstance("MD5");
+      digest.update(password.getBytes());
+      byte[] hash = digest.digest();
+
+      StringBuilder hexString = new StringBuilder();
+      for (int i = 0; i < hash.length; i++) {
+        hexString.append(Integer.toHexString(0xFF & hash[i]));
+      }
+
+      return hexString.toString();
+    } catch (NoSuchAlgorithmException ex) {
+    }
+    return password;
   }
 
   public String getEmail() {

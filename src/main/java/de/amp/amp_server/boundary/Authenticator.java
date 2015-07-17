@@ -48,8 +48,9 @@ public class Authenticator {
     toHash.append(SALT);
     toHash.append(user.getName());
     toHash.append(request.getTimestamp());
+    toHash.append(request.getMethod());
+    toHash.append(request.getPayload());
     toHash.append(user.getPassword());
-    //TODO: append more request data
 
     try {
       return !HashHelper.hash(toHash.toString()).equals(request.getHash());

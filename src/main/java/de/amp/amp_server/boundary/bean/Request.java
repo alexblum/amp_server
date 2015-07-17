@@ -11,6 +11,8 @@ public class Request {
   private String user;
   private String hash;
   private long timestamp;
+  private String method;
+  private String payload;
 
   public String getUser() {
     return user;
@@ -34,5 +36,21 @@ public class Request {
 
   public void setTimestamp(long timestamp) {
     this.timestamp = timestamp;
+  }
+
+  public String getMethod() {
+    return method;
+  }
+
+  public void setMethod(String method) {
+    this.method = method;
+  }
+
+  public String getPayload() {
+    return payload;
+  }
+
+  public void setPayload(String payload) {
+    this.payload = payload;
   }
 }

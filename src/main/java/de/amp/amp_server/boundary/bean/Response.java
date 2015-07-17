@@ -9,6 +9,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Response {
 
   private String result;
+  private String payload;
+
+  public Response() {
+  }
+
+  public Response(String result, String payload) {
+    this.result = result;
+    this.payload = payload;
+  }
 
   public String getResult() {
     return result;
@@ -16,5 +25,13 @@ public class Response {
 
   public void setResult(String result) {
     this.result = result;
+  }
+
+  public String getPayload() {
+    return payload;
+  }
+
+  public void setPayload(String payload) {
+    this.payload = payload;
   }
 }

@@ -39,6 +39,34 @@ public class UserDAO extends AbstractDAO {
     return null;
   }
 
+  public int countUsers() {
+    Connection connection = null;
+    PreparedStatement ps = null;
+    ResultSet resultSet = null;
+
+    try {
+      connection = getConnection();
+      ps = connection.prepareStatement("SELECT count(1) FROM user");
+
+      resultSet = ps.executeQuery();
+      if (resultSet.next()) {
+        return resultSet.getInt(1);
+      }
+
+    } catch (Exception ex) {
+      Logger.getLogger(getClass().getName()).log(Level.WARNING, null, ex);
+    } finally {
+      try {
+        resultSet.close();
+        ps.close();
+        connection.close();
+      } catch (Exception ex) {
+      }
+    }
+
+    return 0;
+  }
+
   private User map(ResultSet resultSet) throws SQLException {
     User u = new User();
     u.setId(resultSet.getInt("id"));

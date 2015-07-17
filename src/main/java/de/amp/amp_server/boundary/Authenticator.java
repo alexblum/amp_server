@@ -25,7 +25,7 @@ public class Authenticator {
     AUTH.put("admin", "admin");
   }
 
-  public boolean authenticate(Request request) {
+  public static boolean validRequest(final Request request) {
     if (timestampTooOld(request)) {
       return false;
     }
@@ -36,9 +36,9 @@ public class Authenticator {
     return true;
   }
 
-  private boolean timestampTooOld(Request request) {
-    long timestamp = request.getTimestamp();
-    Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
+  private static boolean timestampTooOld(final Request request) {
+    final long timestamp = request.getTimestamp();
+    final Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
     if (requestTimestamp.plus(REQUEST_DEVIATION).isBefore(Instant.now())) {
       LOGGER.log(Level.INFO, "timestamp is too old for {0}", request.getUser());
       return true;
@@ -46,14 +46,14 @@ public class Authenticator {
     return false;
   }
 
-  private boolean hashInvalid(Request request) {
+  private static boolean hashInvalid(Request request) {
     User user = findUser(request);
     if (user == null) {
       LOGGER.log(Level.INFO, "user not found for {0}", request.getUser());
       return true;
     }
 
-    StringBuilder toHash = new StringBuilder();
+    final StringBuilder toHash = new StringBuilder();
     toHash.append(SALT);
     toHash.append(user.getName());
     toHash.append(request.getTimestamp());
@@ -69,7 +69,7 @@ public class Authenticator {
     return true;
   }
 
-  private User findUser(Request request) {
+  private static User findUser(Request request) {
     UserDAO userDAO = new UserDAO();
     User userBean = userDAO.findByName(request.getUser());
     if (userBean == null) {

@@ -26,7 +26,7 @@ public class RestInterface {
   public Response entry(Request request) {
     System.out.println("received post!");
 
-    if (Authenticator.authenticate(request)) {
+    if (Authenticator.validRequest(request)) {
       Response response = new Response();
       response.setResult(":)");
       return response;

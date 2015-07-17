@@ -22,7 +22,7 @@ public class Authenticator {
     AUTH.put("admin", "admin");
   }
 
-  public static boolean authenticate(final Request request) {
+  public static boolean validRequest(final Request request) {
     if (timestampTooOld(request)) {
       return false;
     }
@@ -58,7 +58,7 @@ public class Authenticator {
     //TODO: append more request data
 
     try {
-      return HashHelper.hash(toHash.toString()).equals(request.getHash());
+      return !HashHelper.hash(toHash.toString()).equals(request.getHash());
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
       Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
     }

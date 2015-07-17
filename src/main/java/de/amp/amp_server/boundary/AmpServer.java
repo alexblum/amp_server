@@ -1,7 +1,5 @@
 package de.amp.amp_server.boundary;
 
-import de.amp.amp_server.boundary.RestInterface;
-import de.amp.amp_server.boundary.AmpErrorHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.eclipse.jetty.server.Server;
@@ -17,7 +15,7 @@ public class AmpServer {
     ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     context.setContextPath("/");
 
-    Server jettyServer = new Server(1337);
+    Server jettyServer = new Server(PORT);
     jettyServer.setHandler(context);
     jettyServer.addBean(new AmpErrorHandler());
 

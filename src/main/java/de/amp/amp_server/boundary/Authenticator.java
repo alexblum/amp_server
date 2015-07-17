@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,17 +15,7 @@ public class Authenticator {
 
   private static final String SALT = "amp_server_rocks_";
   private static final Duration REQUEST_DEVIATION = Duration.ofMinutes(5L);
-  private static final Map<String, String> AUTH = new HashMap<>();
   private static final Logger LOGGER = Logger.getLogger(Authenticator.class.getName());
-
-  static {
-    try {
-      AUTH.put("user", HashHelper.hash("user"));
-      AUTH.put("admin", HashHelper.hash("admin"));
-    } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-      Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
-    }
-  }
 
   public static boolean validRequest(final Request request) {
     if (timestampTooOld(request)) {

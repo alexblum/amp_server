@@ -36,6 +36,7 @@ public class AmpServer {
     } catch (Exception ex) {
       Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "fatal error: ", ex);
     } finally {
+      Logger.getLogger(AmpServer.class.getName()).log(Level.INFO, "destroy server");
       jettyServer.destroy();
     }
   }

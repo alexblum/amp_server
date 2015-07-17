@@ -1,7 +1,9 @@
 package de.amp.amp_server.boundary;
 
 import de.amp.amp_server.boundary.bean.Request;
+import de.amp.amp_server.control.bean.User;
 import de.amp.amp_server.control.helper.HashHelper;
+import de.amp.amp_server.datasource.dao.UserDAO;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
@@ -16,6 +18,7 @@ public class Authenticator {
   private static final String SALT = "amp_server_rocks_";
   private static final Duration REQUEST_DEVIATION = Duration.ofMinutes(5L);
   private static final Map<String, String> AUTH = new HashMap<>();
+  private static final Logger LOGGER = Logger.getLogger(Authenticator.class.getName());
 
   static {
     try {
@@ -31,6 +34,7 @@ public class Authenticator {
       return false;
     }
     if (hashInvalid(request)) {
+      LOGGER.log(Level.INFO, "password failed for {0}", request.getUser());
       return false;
     }
     return true;
@@ -40,44 +44,40 @@ public class Authenticator {
     final long timestamp = request.getTimestamp();
     final Instant requestTimestamp = Instant.ofEpochMilli(timestamp);
     if (requestTimestamp.plus(REQUEST_DEVIATION).isBefore(Instant.now())) {
-      System.out.println("timestamp invalid");
-      System.out.println("server: " + Instant.now());
-      System.out.println("client: " + requestTimestamp);
       return true;
     }
     return false;
   }
 
   private static boolean hashInvalid(Request request) {
-    final String user = request.getUser();
-    final String passphrase = findPassphraseForUser(user);
-    if (passphrase == null) {
-      System.out.println("no passphrase");
+    User user = findUser(request);
+    if (user == null) {
+      LOGGER.log(Level.INFO, "user not found for {0}", request.getUser());
       return true;
     }
-    long timestamp = request.getTimestamp();
 
     final StringBuilder toHash = new StringBuilder();
-
     toHash.append(SALT);
-    toHash.append(user);
-    toHash.append(timestamp);
-    toHash.append(passphrase);
+    toHash.append(user.getName());
+    toHash.append(request.getTimestamp());
+    toHash.append(user.getPassword());
     //TODO: append more request data
 
-    System.out.println("toHash: " + toHash.toString());
-
     try {
-      boolean hashesEqual = HashHelper.hash(toHash.toString()).equals(request.getHash());
-      System.out.println("hashes equal: " + hashesEqual);
-      return !hashesEqual;
+      return !HashHelper.hash(toHash.toString()).equals(request.getHash());
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-      Logger.getLogger(Authenticator.class.getName()).log(Level.SEVERE, null, ex);
+      LOGGER.log(Level.WARNING, null, ex);
     }
     return true;
   }
 
-  private static String findPassphraseForUser(String user) {
-    return AUTH.get(user);
+  private static User findUser(Request request) {
+    UserDAO userDAO = new UserDAO();
+    User userBean = userDAO.findByName(request.getUser());
+    if (userBean == null) {
+      return null;
+    }
+
+    return userBean;
   }
 }

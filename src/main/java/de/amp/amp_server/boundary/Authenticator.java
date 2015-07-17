@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +26,17 @@ public class Authenticator {
       LOGGER.log(Level.INFO, "password failed for {0}", request.getUser());
       return false;
     }
+
+    updateLastLogin(request);
+
     return true;
+  }
+
+  private static void updateLastLogin(final Request request) {
+    User user = findUser(request);
+    user.setLastLogin(new Date());
+    UserDAO userDAO = new UserDAO();
+    userDAO.update(user);
   }
 
   private static boolean timestampTooOld(final Request request) {
@@ -53,6 +64,7 @@ public class Authenticator {
     toHash.append(user.getPassword());
 
     try {
+      System.out.println(HashHelper.hash(toHash.toString()));
       return !HashHelper.hash(toHash.toString()).equals(request.getHash());
     } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
       LOGGER.log(Level.WARNING, null, ex);

@@ -13,11 +13,13 @@ public class AmpServer {
 
   private static final int PORT = 1337;
 
-  public void start() {
+  private final Server jettyServer;
+
+  public AmpServer() {
     ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
     context.setContextPath("/");
 
-    Server jettyServer = new Server(PORT);
+    jettyServer = new Server(PORT);
     jettyServer.setHandler(context);
     jettyServer.addBean(new AmpErrorHandler());
 
@@ -29,12 +31,23 @@ public class AmpServer {
     filterHolder.setInitParameter("allowedOrigins", "*");
     filterHolder.setInitParameter("allowedMethods", "GET,POST");
     context.addFilter(filterHolder, "/*", null);
+  }
 
+  public void start() {
     try {
       jettyServer.start();
-      jettyServer.join();
+//      jettyServer.join();
     } catch (Exception ex) {
       Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "fatal error: ", ex);
+      jettyServer.destroy();
+    }
+  }
+
+  public void stop() {
+    try {
+      jettyServer.stop();
+    } catch (Exception ex) {
+      Logger.getLogger(AmpServer.class.getName()).log(Level.SEVERE, null, ex);
     } finally {
       jettyServer.destroy();
     }

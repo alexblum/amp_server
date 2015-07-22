@@ -26,7 +26,7 @@ public final class App {
   public static void init() {
     synchronized (LOCK) {
       if (instance != null) {
-        throw new IllegalStateException("game already initialized");
+        throw new IllegalStateException("app already initialized");
       }
       instance = new App();
     }
@@ -34,7 +34,7 @@ public final class App {
 
   public static App getSingleton() {
     if (instance == null) {
-      throw new IllegalStateException("game not initialized");
+      throw new IllegalStateException("app not initialized");
     }
     return instance;
   }
@@ -42,7 +42,7 @@ public final class App {
   public void stop() {
     synchronized (LOCK) {
       if (instance == null) {
-        throw new IllegalStateException("game already initialized");
+        throw new IllegalStateException("app already initialized");
       }
       instance = null;
     }

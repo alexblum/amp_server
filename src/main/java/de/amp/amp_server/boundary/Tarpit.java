@@ -1,5 +1,6 @@
 package de.amp.amp_server.boundary;
 
+import de.amp.amp_server.boundary.bean.Request;
 import de.amp.amp_server.boundary.bean.Response;
 import de.amp.amp_server.boundary.bean.TarpitBean;
 import java.time.Duration;
@@ -11,15 +12,15 @@ public final class Tarpit {
 
   static final ConcurrentHashMap<String, TarpitBean> CACHE = new ConcurrentHashMap<>();
   //
-  private static final Duration MINIMUM_REQUEST_DELAY = Duration.ofMillis(10000);
+  private static final Duration MINIMUM_REQUEST_DELAY = Duration.ofMillis(100);
   private static final Duration REQUEST_DENIAL_DURATION = Duration.ofMinutes(1);
   private static final int MAXIMUM_FAILED_ATTEMPTS = 3;
 
   private Tarpit() {
   }
 
-  public static Response validateRequest(HttpServletRequest httpServletRequest) {
-    String key = getKey(httpServletRequest);
+  public static Response validateRequest(Request request, HttpServletRequest httpServletRequest) {
+    String key = getKey(request, httpServletRequest);
 
     TarpitBean tarpitBean = CACHE.get(key);
     if (tarpitBean == null) {
@@ -51,8 +52,8 @@ public final class Tarpit {
     return null;
   }
 
-  static void registerSuccessfulRequest(HttpServletRequest httpServletRequest) {
-    String key = getKey(httpServletRequest);
+  static void registerSuccessfulRequest(Request request, HttpServletRequest httpServletRequest) {
+    String key = getKey(request, httpServletRequest);
     TarpitBean tarpitBean = CACHE.get(key);
     if (tarpitBean == null) {
       tarpitBean = new TarpitBean();
@@ -61,8 +62,8 @@ public final class Tarpit {
     tarpitBean.setFailedRequestCount(0);
   }
 
-  static void registerDeniedRequest(HttpServletRequest httpServletRequest) {
-    String key = getKey(httpServletRequest);
+  static void registerDeniedRequest(Request request, HttpServletRequest httpServletRequest) {
+    String key = getKey(request, httpServletRequest);
     TarpitBean tarpitBean = CACHE.get(key);
     if (tarpitBean == null) {
       tarpitBean = new TarpitBean();
@@ -76,7 +77,10 @@ public final class Tarpit {
     }
   }
 
-  private static String getKey(HttpServletRequest httpServletRequest) {
+  private static String getKey(Request request, HttpServletRequest httpServletRequest) {
+    if (request != null && request.getUser() != null && request.getUser().length() > 0) {
+      return request.getUser().toLowerCase();
+    }
     return httpServletRequest.getRemoteAddr();
   }
 }

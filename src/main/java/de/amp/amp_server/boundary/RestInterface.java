@@ -27,16 +27,16 @@ public class RestInterface {
   @Consumes(MediaType.APPLICATION_JSON)
   public Response entry(Request request, @Context HttpServletRequest httpServletRequest) {
     System.out.println("received post!");
-    Response tarpitResponse = Tarpit.validateRequest(httpServletRequest);
+    Response tarpitResponse = Tarpit.validateRequest(request, httpServletRequest);
     if (tarpitResponse != null) {
       return tarpitResponse;
     }
 
     if (Authenticator.validRequest(request)) {
-      Tarpit.registerSuccessfulRequest(httpServletRequest);
+      Tarpit.registerSuccessfulRequest(request, httpServletRequest);
       return new RequestHandler().handle(request);
     } else {
-      Tarpit.registerDeniedRequest(httpServletRequest);
+      Tarpit.registerDeniedRequest(request, httpServletRequest);
     }
 
     Response response = new Response();

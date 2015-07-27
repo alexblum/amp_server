@@ -8,3 +8,10 @@ CREATE TABLE `user` (
   `active` tinyint(1),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `app_state` (
+  `name` VARCHAR(128) NOT NULL,
+  `value` VARCHAR(1024) DEFAULT NULL,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

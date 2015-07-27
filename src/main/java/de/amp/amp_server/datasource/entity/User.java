@@ -1,14 +1,9 @@
-package de.amp.amp_server.control.bean;
+package de.amp.amp_server.datasource.entity;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class User {
 
   private int id;
@@ -18,6 +13,7 @@ public class User {
   private Date createDate;
   private Date lastLogin;
   private boolean active;
+  private int userGroup;
 
   public int getId() {
     return id;
@@ -93,6 +89,14 @@ public class User {
 
   public void setActive(boolean active) {
     this.active = active;
+  }
+
+  public int getUserGroup() {
+    return userGroup;
+  }
+
+  public void setUserGroup(int userGroup) {
+    this.userGroup = userGroup;
   }
 
   @Override

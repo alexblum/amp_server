@@ -1,5 +1,6 @@
 package de.amp.amp_server.boundary;
 
+import de.amp.amp_server.boundary.bean.AuthenticationResult;
 import de.amp.amp_server.boundary.bean.Request;
 import de.amp.amp_server.boundary.bean.Response;
 import javax.servlet.http.HttpServletRequest;
@@ -25,16 +26,17 @@ public class RestInterface {
   @Path("interface")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response entry(Request request, @Context HttpServletRequest httpServletRequest) {
+  public Response entry(final Request request, @Context final HttpServletRequest httpServletRequest) {
     System.out.println("received post!");
     Response tarpitResponse = Tarpit.validateRequest(request, httpServletRequest);
     if (tarpitResponse != null) {
       return tarpitResponse;
     }
 
-    if (Authenticator.validRequest(request)) {
+    AuthenticationResult authenticationResult = Authenticator.validRequest(request);
+    if (authenticationResult.isAuthenticated()) {
       Tarpit.registerSuccessfulRequest(request, httpServletRequest);
-      return new RequestHandler().handle(request);
+      return new RequestHandler().handle(request, authenticationResult.getUser());
     } else {
       Tarpit.registerDeniedRequest(request, httpServletRequest);
     }

@@ -1,6 +1,6 @@
 package de.amp.amp_server.datasource.dao;
 
-import de.amp.amp_server.control.bean.User;
+import de.amp.amp_server.datasource.entity.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -58,6 +58,7 @@ public class UserDAO extends AbstractDAO {
         resultSet.updateTimestamp("lastLogin", new Timestamp(user.getLastLogin().getTime()));
         resultSet.updateString("name", user.getName());
         resultSet.updateString("password", user.getPassword());
+        resultSet.updateInt("user_group", user.getUserGroup());
         resultSet.updateRow();
         return user;
       }
@@ -113,6 +114,7 @@ public class UserDAO extends AbstractDAO {
     u.setLastLogin(resultSet.getDate("lastLogin"));
     u.setName(resultSet.getString("name"));
     u.setPassword(resultSet.getString("password"));
+    u.setUserGroup(resultSet.getInt("user_group"));
     return u;
   }
 }

@@ -6,6 +6,7 @@ CREATE TABLE `user` (
   `createDate` timestamp,
   `lastLogin` timestamp,
   `active` tinyint(1),
+  `user_group` int(11),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

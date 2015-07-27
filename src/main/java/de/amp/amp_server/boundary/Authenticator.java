@@ -1,7 +1,8 @@
 package de.amp.amp_server.boundary;
 
+import de.amp.amp_server.boundary.bean.AuthenticationResult;
 import de.amp.amp_server.boundary.bean.Request;
-import de.amp.amp_server.control.bean.User;
+import de.amp.amp_server.datasource.entity.User;
 import de.amp.amp_server.control.helper.HashHelper;
 import de.amp.amp_server.datasource.dao.UserDAO;
 import java.io.UnsupportedEncodingException;
@@ -18,22 +19,33 @@ public class Authenticator {
   private static final Duration REQUEST_DEVIATION = Duration.ofMinutes(5L);
   private static final Logger LOGGER = Logger.getLogger(Authenticator.class.getName());
 
-  public static boolean validRequest(final Request request) {
+  public static AuthenticationResult validRequest(final Request request) {
+
     if (timestampTooOld(request)) {
-      return false;
+      return fail();
     }
-    if (hashInvalid(request)) {
+
+    User user = findUser(request);
+    if (user == null) {
+      LOGGER.log(Level.INFO, "user not found for {0}", request.getUser());
+      return fail();
+    }
+
+    if (hashInvalid(user, request)) {
       LOGGER.log(Level.INFO, "password failed for {0}", request.getUser());
-      return false;
+      return fail();
     }
 
-    updateLastLogin(request);
+    updateLastLogin(user, request);
 
-    return true;
+    return new AuthenticationResult(true, user);
   }
 
-  private static void updateLastLogin(final Request request) {
-    User user = findUser(request);
+  private static AuthenticationResult fail() {
+    return new AuthenticationResult(false, null);
+  }
+
+  private static void updateLastLogin(final User user, final Request request) {
     user.setLastLogin(new Date());
     UserDAO userDAO = new UserDAO();
     userDAO.update(user);
@@ -48,12 +60,7 @@ public class Authenticator {
     return false;
   }
 
-  private static boolean hashInvalid(Request request) {
-    User user = findUser(request);
-    if (user == null) {
-      LOGGER.log(Level.INFO, "user not found for {0}", request.getUser());
-      return true;
-    }
+  private static boolean hashInvalid(User user, Request request) {
 
     final StringBuilder toHash = new StringBuilder();
     toHash.append(SALT);

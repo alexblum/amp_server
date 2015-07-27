@@ -1,5 +1,6 @@
 package de.amp.amp_server.control;
 
+import de.amp.amp_server.control.constants.AppState;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,12 @@ public final class App {
 
   private App() {
     running = true;
-    lastTick = Instant.now(); //TODO: read state from db
+    String lastTickFromDb = AppStateController.singleton().getState(AppState.LAST_TICK);
+    if (lastTickFromDb == null) {
+      lastTick = Instant.now();
+    } else {
+      lastTick = Instant.ofEpochMilli(Long.parseLong(lastTickFromDb));
+    }
   }
 
   public static void init() {
@@ -62,6 +68,7 @@ public final class App {
       elapsedSinceLastTick = Duration.between(lastTick, tickStart);
       lastTick = tickStart;
 
+      AppStateController.singleton().updateState(AppState.LAST_TICK, Long.toString(tickStart.toEpochMilli()));
       sleepForRestOfTick(tickStart);
     }
   }
